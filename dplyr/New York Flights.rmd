@@ -1,0 +1,63 @@
+---
+title: "dplyr"
+author: "Vincent La"
+date: "May 2, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(nycflights13)
+library(lubridate)    # For working with dates
+```
+
+# Weekly Flights
+```{r}
+flights.dates = select(flights, year, month, day)
+flights.dates
+```
+
+## Getting Counts Per Day for January
+```{r}
+flights.dates %>%
+  filter(month == 1) %>%
+      count(day)
+```
+
+## Getting Weekly Averages for January
+```{r}
+flights.dates %>%
+    transmute(week = ceiling(day/7)) %>%
+      count(week)
+```
+
+## Getting Weekly Counts for the Whole Year
+```{r}
+flights.weeks = flights.dates %>%
+  transmute(ymd = paste(year, month, day, sep='-')) %>%  # Create year, month, date column
+    mutate(week = lubridate::week(ymd)) %>%
+      count(week)
+
+plot(ts(flights.weeks$n, start=1), main="Flights out of New York City", xlab="Week", ylab="Flights")
+```
+
+### Doing the Same Thing Without dplyr
+WARNING: Atrociously slow (>5 minutes)
+
+```{r cached=TRUE}
+# The ith item in the list corresponds to the number of flights for week i
+week.counts <- vector(mode="list", length=53)
+
+# Look over obsesrvations
+for (i in seq(1, nrow(flights))) {
+  ymd = flights[i, c("year", "month", "day")]
+  week = lubridate::week(paste(ymd$year, ymd$month, ymd$day, sep='-'))
+
+  if (is.null(week.counts[[week]])) {
+    week.counts[[week]] = 1
+  } else {
+    week.counts[[week]] = week.counts[[week]] + 1
+  }
+}
+```
