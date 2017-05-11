@@ -8,14 +8,14 @@ and type in `free -m` on the server side. Before placing shared variables inside
 increased memory usage by 20 MB. This was not ideal for a server that only had 1GB of RAM. On the other hand, 
 after placing the majority of the data in `global.r`, each additional session did not increase memory usage.
 
-'''Before using `global.r`, multiple sessions'''
+**Before using `global.r`, multiple sessions**
 ~~~~
               total        used        free      shared  buff/cache   available
 Mem:            992         535         162          14         294         287
 Swap:           511          89         422
 ~~~~
 
-'''After using `global.r`, multiple sessions`'''
+**After using `global.r`, multiple sessions`**
 ~~~~
               total        used        free      shared  buff/cache   available
 Mem:            992         433         238          14         320         388
